@@ -116,9 +116,6 @@ def getBuildings(lat: float, lon: float, r: float):
                 try: 
                     if float( cleanString(tags[i]['layer'].split( ',' )[0].split( ';' )[0]) ) < 0: height = -1 * height
                 except: pass
-        #if height > 150: 
-        #    print(height)
-        #    #height = 10 
 
         for k, y in enumerate(ids): # go through each node of the Way
             if k==len(ids)-1: continue # ignore last 
@@ -135,7 +132,7 @@ def getBuildings(lat: float, lon: float, r: float):
     return objectGroup
 
 
-def extrudeBuildings(coords: List[dict], height: float):
+def extrudeBuildings(coords: List[dict], height: float) -> Mesh:
     from specklepy.objects.geometry import Mesh 
     vertices = []
     faces = []

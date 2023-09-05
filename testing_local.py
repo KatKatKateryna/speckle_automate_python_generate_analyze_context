@@ -9,33 +9,15 @@ from specklepy.objects import Base
 from specklepy.objects.other import Collection
 from specklepy.api.models import Branch 
 
-from flatten import flatten_base
 #from utils.utils_network import calculateAccessibility
 from utils.utils_osm import getBuildings, getRoads
 from utils.utils_other import RESULT_BRANCH
 
-server_url = "https://latest.speckle.dev/" #"https://speckle.xyz/" # project_data.speckle_server_url
-project_id = "4ea6a03993" #project_data.project_id
-model_id = "revit models"
-#version_id = "5d720c0998" #project_data.version_id
-radius_in_meters = 300 #float(project_data.radius) 
-
-#model_id = #project_data.model_id
-
-account = get_local_accounts()[0]
-client = SpeckleClient(server_url)
-client.authenticate_with_token(account.token)
-branch: Branch = client.branch.get(project_id, model_id, 1)
-
-commit = branch.commits.items[0] 
-server_transport = ServerTransport(project_id, client)
-base = receive(branch.commits.items[0].referencedObject, server_transport)
-
-
-def run(client, server_transport, radius_in_meters): 
+def run(client, server_transport, base, radius_in_meters): 
     try:
 
         import numpy as np 
+        project_id = server_transport.stream_id
         projInfo = base["info"] #[o for o in objects if o.speckle_type.endswith("Revit.ProjectInfo")][0] 
         
         lon = np.rad2deg(projInfo["longitude"])
@@ -45,9 +27,6 @@ def run(client, server_transport, radius_in_meters):
             angle_rad = projInfo["locations"][0]["trueNorth"]
             angle_deg = np.rad2deg(angle_rad)
         except: pass 
-
-        #lat = 42.35866165161133
-        #lon = -71.0567398071289
 
         crsObj = None
         commitObj = Collection(elements = [], units = "m", name = "Context", collectionType = "BuildingsLayer")
@@ -95,4 +74,21 @@ def run(client, server_transport, radius_in_meters):
     except Exception as e: 
         raise e 
 
-run(client, server_transport, radius_in_meters)
+r'''
+server_url = "https://latest.speckle.dev/" #"https://speckle.xyz/" # project_data.speckle_server_url
+project_id = "4ea6a03993" #project_data.project_id
+model_id = "revit models"
+#version_id = "5d720c0998" #project_data.version_id
+radius_in_meters = 300 #float(project_data.radius) 
+
+#model_id = #project_data.model_id
+
+account = get_local_accounts()[0]
+client = SpeckleClient(server_url)
+client.authenticate_with_token(account.token)
+branch: Branch = client.branch.get(project_id, model_id, 1)
+
+commit = branch.commits.items[0] 
+server_transport = ServerTransport(project_id, client)
+base = receive(branch.commits.items[0].referencedObject, server_transport)
+'''

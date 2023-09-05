@@ -13,6 +13,8 @@ from make_comment import make_comment
 
 import numpy
 
+from testing_local import run
+
 class SpeckleProjectData(BaseModel):
     """Values of the project / model that triggered the run of this function."""
 
@@ -44,32 +46,13 @@ def main(speckle_project_data: str, function_inputs: str, speckle_token: str):
 
     client = SpeckleClient(project_data.speckle_server_url, use_ssl=False)
     client.authenticate_with_token(speckle_token)
-    #commit = client.commit.get(project_data.project_id, project_data.version_id)
     branch: Branch = client.branch.get(project_data.project_id, project_data.model_id, 1)
 
-    memory_transport = MemoryTransport()
     server_transport = ServerTransport(project_data.project_id, client)
-    base = receive(branch.commits.items[0].referencedObject, server_transport, memory_transport)
+    base = receive(branch.commits.items[0].referencedObject, server_transport)
 
-    objects = [b for b in flatten_base(base)]
-    try:
-        projInfo = [o for o in objects if o.speckle_type.endswith("Revit.ProjectInfo")][0] 
-        angle_rad = projInfo["locations"][0]["trueNorth"]
-        lon = projInfo["longitude"]
-        lat = projInfo["latitude"]
-    except: pass
+    run(client, server_transport, base, inputs.radius_in_meters)
     
-    random_beam = random.choice( objects )
-
-    make_comment(
-        client,
-        project_data.project_id,
-        branch.id,
-        project_data.version_id,
-        inputs.comment_text,
-        random_beam.id,
-    )
-
     print(
         "Ran function with",
         f"{speckle_project_data} {function_inputs}",
