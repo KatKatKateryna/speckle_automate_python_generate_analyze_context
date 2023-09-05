@@ -1,19 +1,14 @@
 import typer
 from pydantic import BaseModel, ConfigDict
 from stringcase import camelcase
-from specklepy.transports.memory import MemoryTransport
 from specklepy.transports.server import ServerTransport
 from specklepy.api.operations import receive
 from specklepy.api.client import SpeckleClient
 from specklepy.api.models import Branch
-import random
 
-from flatten import flatten_base
-from make_comment import make_comment
+from run_context import run as run_context
+#from run_analysis import run as run_analysis
 
-import numpy
-
-from testing_local import run
 
 class SpeckleProjectData(BaseModel):
     """Values of the project / model that triggered the run of this function."""
@@ -51,7 +46,8 @@ def main(speckle_project_data: str, function_inputs: str, speckle_token: str):
     server_transport = ServerTransport(project_data.project_id, client)
     base = receive(branch.commits.items[0].referencedObject, server_transport)
 
-    run(client, server_transport, base, inputs.radius_in_meters)
+    run_context(client, server_transport, base, inputs.radius_in_meters)
+    #run_analysis(client, server_transport, inputs.keyword)
     
     print(
         "Ran function with",

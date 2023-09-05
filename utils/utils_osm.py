@@ -2,7 +2,7 @@
 from copy import copy
 import math
 from typing import List
-from utils.utils_network import colorSegments
+#from utils.utils_network import colorSegments
 from utils.utils_other import COLOR_BLD, COLOR_ROAD, cleanString, fillList
 from utils.utils_pyproj import createCRS, reprojectToCrs
 from specklepy.objects import Base
@@ -331,12 +331,12 @@ def getRoads(lat: float, lon: float, r: float):
         height = None   
     
     
-    objAnalysis, maxCount = colorSegments(lat, lon, r)
-    for ob in objAnalysis:
-        mesh = lineColorBuffer(ob, maxCount, 2)
-        analysisGroup.append(mesh)
+    #objAnalysis, maxCount = colorSegments(lat, lon, r)
+    #for ob in objAnalysis:
+    #    mesh = lineColorBuffer(ob, maxCount, 2)
+    #    analysisGroup.append(mesh)
 
-    return objectGroup, meshGroup, analysisGroup
+    return objectGroup, meshGroup, [] #analysisGroup
 
 def lineColorBuffer(poly: Line, maxCount: float, value: float):
     import json
