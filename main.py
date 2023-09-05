@@ -5,6 +5,7 @@ from specklepy.transports.memory import MemoryTransport
 from specklepy.transports.server import ServerTransport
 from specklepy.api.operations import receive
 from specklepy.api.client import SpeckleClient
+from specklepy.api.models import Branch
 import random
 
 from flatten import flatten_base
@@ -28,7 +29,7 @@ class FunctionInputs(BaseModel):
     These are function author defined values, automate will make sure to supply them.
     """
 
-    comment_text: str
+    radius_in_meters: str
 
     class Config:
         alias_generator = camelcase
@@ -43,12 +44,12 @@ def main(speckle_project_data: str, function_inputs: str, speckle_token: str):
 
     client = SpeckleClient(project_data.speckle_server_url, use_ssl=False)
     client.authenticate_with_token(speckle_token)
-    commit = client.commit.get(project_data.project_id, project_data.version_id)
-    branch = client.branch.get(project_data.project_id, project_data.model_id, 1)
+    #commit = client.commit.get(project_data.project_id, project_data.version_id)
+    branch: Branch = client.branch.get(project_data.project_id, project_data.model_id, 1)
 
     memory_transport = MemoryTransport()
     server_transport = ServerTransport(project_data.project_id, client)
-    base = receive(commit.referencedObject, server_transport, memory_transport)
+    base = receive(branch.commits.items[0].referencedObject, server_transport, memory_transport)
 
     objects = [b for b in flatten_base(base)]
     try:
