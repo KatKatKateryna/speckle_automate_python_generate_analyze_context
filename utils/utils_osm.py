@@ -174,7 +174,7 @@ def extrudeBuildings(coords: List[dict], height: float) -> Mesh:
             vertices.extend([c['x'],c['y'],0, nextC['x'],nextC['y'],0, nextC['x'],nextC['y'],height,c['x'],c['y'],height])
         colors.extend([color, color, color, color])
 
-    obj = Mesh.create(faces = faces, vertices = vertices)
+    obj = Mesh.create(faces = faces, vertices = vertices, colors = colors)
     obj.units = "m"
     return obj 
 
