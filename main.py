@@ -26,7 +26,7 @@ class FunctionInputs(BaseModel):
     These are function author defined values, automate will make sure to supply them.
     """
 
-    radius_in_meters: str
+    radius_in_meters: float
 
     class Config:
         alias_generator = camelcase
@@ -46,7 +46,7 @@ def main(speckle_project_data: str, function_inputs: str, speckle_token: str):
     server_transport = ServerTransport(project_data.project_id, client)
     base = receive(branch.commits.items[0].referencedObject, server_transport)
 
-    run_context(client, server_transport, base, inputs.radius_in_meters)
+    run_context(client, server_transport, base, float(inputs.radius_in_meters))
     #run_analysis(client, server_transport, inputs.keyword)
     
     print(
