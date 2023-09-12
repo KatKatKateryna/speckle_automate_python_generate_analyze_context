@@ -27,6 +27,7 @@ class FunctionInputs(BaseModel):
     """
 
     radius_in_meters: str
+    branch_name: str
 
     class Config:
         alias_generator = camelcase
@@ -41,7 +42,7 @@ def main(speckle_project_data: str, function_inputs: str, speckle_token: str):
 
     client = SpeckleClient(project_data.speckle_server_url, use_ssl=False)
     client.authenticate_with_token(speckle_token)
-    branch: Branch = client.branch.get(project_data.project_id, project_data.model_id, 1)
+    branch: Branch = client.branch.get(project_data.project_id, function_inputs.branch_name, 1)
 
     server_transport = ServerTransport(project_data.project_id, client)
     base = receive(branch.commits.items[0].referencedObject, server_transport)

@@ -15,8 +15,8 @@ def getBuildings(lat: float, lon: float, r: float):
 
     projectedCrs = createCRS(lat, lon)
     lonPlus1, latPlus1 = reprojectToCrs(1, 1, projectedCrs, "EPSG:4326")
-    scaleX = lonPlus1 - lon
-    scaleY = latPlus1 - lat
+    scaleX: float = lonPlus1 - lon
+    scaleY: float = latPlus1 - lat
     #r = RADIUS #meters
 
     overpass_url = "http://overpass-api.de/api/interpreter"
