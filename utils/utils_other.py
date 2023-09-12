@@ -4,7 +4,7 @@ from typing import List
 import numpy as np
 from specklepy.objects.geometry import Point
 
-RESULT_BRANCH = "automate demo"
+RESULT_BRANCH = "automate"
 COLOR_ROAD = (255<<24) + (50<<16) + (50<<8) + 50 # argb
 COLOR_BLD = (255<<24) + (230<<16) + (230<<8) + 230 # argb
 COLOR_VISIBILITY = (255<<24) + (255<<16) + (10<<8) + 10 # argb
