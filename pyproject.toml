@@ -17,6 +17,8 @@ pyproj = "^3.6.0"
 shapely = "^2.0.1"
 osmnet = "^0.1.7"
 matplotlib = "^3.7.2"
+geovoronoi = "^0.4.0"
+pandana = "^0.7"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.3.0"

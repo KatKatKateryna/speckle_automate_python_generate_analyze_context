@@ -4,9 +4,10 @@ from pandana.loaders import osm
 import pandas as pd 
 
 from specklepy.objects import Base
-from specklepy.objects.geometry import Polyline, Point, Line 
+from specklepy.objects.geometry import Polyline, Point, Line
+from utils.utils_geometry import rotate_pt 
 
-from utils.utils_pyproj import createCRS, getBbox, reprojectToCrs
+from utils.utils_pyproj import create_crs, getBbox, reproject_to_crs
 
 def calculateAccessibility(lat, lon, r):
     y0,x0,y1,x1 = getBbox(lat, lon, r)
@@ -32,11 +33,11 @@ def calculateAccessibility(lat, lon, r):
     #print(id_counts)
     return network, id_counts
     
-def colorSegments(lat, lon, r):
+def colorSegments(lat:float, lon:float, r:float, angle_rad:float):
     lines = []
     maxCount = 0
 
-    projectedCrs = createCRS(lat, lon)
+    projectedCrs = create_crs(lat, lon)
 
     network, id_counts = calculateAccessibility(lat, lon, r)
     nodesX = network.nodes_df.iloc[:,0].to_list()
@@ -57,16 +58,25 @@ def colorSegments(lat, lon, r):
         
             # get coordinates 
             ind1 = nodesIds.index(fromNode)
-            lon1, lat1 = reprojectToCrs(nodesY[ind1], nodesX[ind1], "EPSG:4326", projectedCrs)
-            pt1 = Point.from_list([lon1, lat1, 0])
+            lon1, lat1 = reproject_to_crs(nodesY[ind1], nodesX[ind1], "EPSG:4326", projectedCrs)
+            #pt1 = Point.from_list([lon1, lat1, 0])
 
             ind2 = nodesIds.index(toNode)
-            lon2, lat2 = reprojectToCrs(nodesY[ind2], nodesX[ind2], "EPSG:4326", projectedCrs)
-            pt2 = Point.from_list([lon2, lat2, 0])
+            lon2, lat2 = reproject_to_crs(nodesY[ind2], nodesX[ind2], "EPSG:4326", projectedCrs)
+            #pt2 = Point.from_list([lon2, lat2, 0])
 
             length = math.sqrt( math.pow( (lon2-lon1),2) + math.pow( (lat2-lat1),2) )
 
             if length<1: continue
+            
+            if angle_rad == 0:
+                pt1 = Point.from_list([lon1, lat1, 0])
+                pt2 = Point.from_list([lon2, lat2, 0])
+            else:
+                coords1 = rotate_pt({"x": lon1, "y": lat1}, angle_rad)
+                coords2 = rotate_pt({"x": lon2, "y": lat2}, angle_rad)
+                pt1 = Point.from_list([coords1["x"], coords1["y"], 0])
+                pt2 = Point.from_list([coords2["x"], coords2["y"], 0])
 
             line = Line(start =pt1, end=pt2, units = "m" )
             line.length = length
