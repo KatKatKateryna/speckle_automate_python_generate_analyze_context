@@ -107,7 +107,7 @@ from specklepy.api.credentials import get_local_accounts
 server_url = "https://latest.speckle.dev/"  # "https://speckle.xyz/" # project_data.speckle_server_url
 project_id = "aeb6aa8a6c"  # project_data.project_id
 model_id = "main"
-radius_in_meters = 300  # float(project_data.radius)
+radius_in_meters = 500  # float(project_data.radius)
 
 account = get_local_accounts()[0]
 client = SpeckleClient(server_url)
